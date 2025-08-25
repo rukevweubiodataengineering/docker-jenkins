@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+     agent {
+        docker { image 'node:20-alpine' }
+     }
 
     environment {
         DOCKER_IMAGE = "rukevweubio/nodejs-app"
@@ -17,7 +19,8 @@ pipeline {
             steps {
                 script {
                     echo "Testing the Node.js app..."
-                    sh "npm install && npm test"
+                    sh "npm install "
+                    sh " npm test"
                 }
             }
         }
