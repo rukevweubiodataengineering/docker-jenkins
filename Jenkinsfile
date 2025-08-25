@@ -71,6 +71,7 @@ pipeline {
                 script {
                     sh '''
                         export PATH=$HOME/bin:$PATH
+                        kind delete cluster --name jenkins-demo
                         kind create cluster --name jenkins-demo
                         kubectl cluster-info --context kind-jenkins-demo
                     '''
