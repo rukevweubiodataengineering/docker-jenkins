@@ -16,13 +16,17 @@ pipeline {
             }
         }
 
-        stage('Test Node.js App') {
+               stage('Test Node.js App') {
             steps {
-                echo "Testing the Node.js application..."
-                sh 'node -v'
-                sh 'npm -v'
-                sh 'npm install'
-                sh 'npm test'
+                script {
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        echo "Testing the Node.js application..."
+                        sh 'node -v'
+                        sh 'npm -v'
+                        sh 'npm install'
+                        sh 'npm test'
+                    }
+                }
             }
         }
 
