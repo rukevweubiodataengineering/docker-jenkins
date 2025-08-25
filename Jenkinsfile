@@ -7,7 +7,6 @@ pipeline {
     environment {
         DOCKER_IMAGE = "rukevweubio/nodejs-app"
         DOCKER_TAG   = "latest"
-        PATH = "$HOME/bin:$PATH" // Ensure custom bin is in PATH
     }
 
     stages {
@@ -52,23 +51,19 @@ pipeline {
             }
         }
 
-        stage('Start Minikube and Install kubectl') {
+        stage('Start Minikube') {
             steps {
                 script {
                     sh '''
-                        # Ensure local bin exists and is in PATH
-                        mkdir -p $HOME/bin
-                        export PATH=$HOME/bin:$PATH
-
+                        export PATH=$PATH:/usr/local/bin
                         # Start Minikube if not running
                         minikube status || minikube start --driver=docker
                         minikube version
-
-                        # Install kubectl if missing
+                        # Ensure kubectl is installed and in PATH
                         if ! command -v kubectl &> /dev/null; then
                             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
                             chmod +x kubectl
-                            mv kubectl $HOME/bin/
+                            sudo mv kubectl /usr/local/bin/kubectl
                         fi
                         kubectl version --client
                     '''
@@ -80,7 +75,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        export PATH=$HOME/bin:$PATH
+                        export PATH=$PATH:/usr/local/bin
                         kubectl apply -f k8/deployment.yaml
                         kubectl apply -f k8/service.yaml
                         kubectl rollout status deployment/nodejs-app
