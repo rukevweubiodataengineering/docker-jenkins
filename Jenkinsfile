@@ -74,8 +74,9 @@ pipeline {
         stage('Deploy to Kind') {
             steps {
                 sh '''
-                    kubectl apply -f k8/deployment.yaml
-                    kubectl apply -f k8/service.yaml
+                    ls -R 
+                    kubectl apply -f K8/deployment.yaml
+                    kubectl apply -f K8/service.yaml
                     kubectl rollout status deployment/nodejs-app
                     kubectl get pods
                 '''
