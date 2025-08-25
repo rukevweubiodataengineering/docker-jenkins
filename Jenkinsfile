@@ -70,8 +70,8 @@ pipeline {
                 script {
                     sh '''
                         export PATH=$PATH:/usr/local/bin
-                        kubectl apply -f k8/deployment.yaml
-                        kubectl apply -f k8/service.yaml
+                        kubectl apply -f K8/deployment.yaml
+                        kubectl apply -f K8/service.yaml
                         kubectl rollout status deployment/nodejs-app
                         kubectl get pods
                     '''
