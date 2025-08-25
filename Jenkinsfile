@@ -77,26 +77,18 @@ pipeline {
                 }
             }
         }
-                 stage('Start Minikube') {
-            steps {
-                script {
-                    // Download and install Minikube if not already installed
-                    sh '''
-                        if ! command -v minikube &> /dev/null; then
-                            curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-                            sudo install minikube-linux-amd64 /usr/local/bin/minikube
-                        fi
-        
-                        # Ensure /usr/local/bin is in PATH
-                        export PATH=$PATH:/usr/local/bin
-        
-                        # Start Minikube if not running
-                        minikube status || minikube start --driver=docker
-                        minikube version
-                    '''
+                    stage('Start Minikube') {
+                steps {
+                    script {
+                        sh '''
+                            export PATH=$PATH:/usr/local/bin
+                            minikube status || minikube start --driver=docker
+                            minikube version
+                        '''
+                    }
                 }
             }
-}
+
 
 
         stage('Deploy to Minikube') {
