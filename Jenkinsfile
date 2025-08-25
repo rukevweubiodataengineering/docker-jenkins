@@ -91,15 +91,18 @@ pipeline {
 
 
 
-        stage('Deploy to Minikube') {
-            steps {
-                script {
-                    echo "Deploying to Minikube..."
-                    sh "kubectl apply -f k8/deployment.yaml"
-                    sh "kubectl apply -f k8/service.yaml"
-                    sh "kubectl rollout status deployment/nodejs-app"
+                   stage('Deploy to Kubernetes') {
+                steps {
+                    script {
+                        sh '''
+                            export PATH=$PATH:/usr/local/bin
+                            kubectl version --client
+                            kubectl apply -f k8/deployment.yaml
+                            kubectl apply -f k8/service.yaml
+                            kubectl get pods
+                        '''
+                    }
                 }
             }
-        }
-    }
+
 }
