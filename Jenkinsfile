@@ -77,8 +77,10 @@ pipeline {
                     ls -R 
                     kubectl apply -f K8/deployment.yaml
                     kubectl apply -f K8/service.yaml
-                    kubectl rollout status deployment/nodejs-app
-                    kubectl get pods
+                     kubectl get pods -o wide
+                    kubectl describe pods
+                    kubectl logs -l app=nodejs-app
+                    
                 '''
             }
         }
