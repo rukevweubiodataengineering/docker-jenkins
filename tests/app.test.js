@@ -1,6 +1,6 @@
 // tests/app.test.js
 const request = require('supertest');
-const app = require('../server');
+const app = require('../Node.js/server');
 
 describe('API Endpoints', () => {
   describe('GET /', () => {
