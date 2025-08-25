@@ -73,13 +73,17 @@ pipeline {
 
         stage('Deploy to Kind') {
             steps {
+                echo "Logs of nodejs-app pods:"
                 sh '''
                     ls -R 
                     kubectl apply -f K8/deployment.yaml
                     kubectl apply -f K8/service.yaml
-                     kubectl get pods -o wide
+                    kubectl get pods -o wide
                     kubectl describe pods
                     kubectl logs -l app=nodejs-app
+                    kubectl logs -l app=nodejs-app
+                    kubectl get svc -o wide 
+                    kubectl get all
                     
                 '''
             }
@@ -90,7 +94,6 @@ pipeline {
                 echo "Cluster is ready. Press Enter in the terminal to continue..."
               sh '''
                         echo "Press Enter to continue..."
-                        read dummy
                     '''
 
             }
