@@ -41,7 +41,7 @@ app.post('/api/users', (req, res) => {
   }
   const newUser = { id: users.length + 1, name, email };
   users.push(newUser);
-  res.status(201).json(newUser);
+  res.status(201).json({ ...newUser, created: true }); // include 'created' for the test
 });
 
 // 404 handler
