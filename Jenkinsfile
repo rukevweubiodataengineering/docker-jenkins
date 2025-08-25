@@ -1,7 +1,7 @@
 pipeline {
-   agent any
-     tools {
-        nodejs 'NodeJS_20'   // Must match the name you set
+    agent any
+    tools {
+        nodejs 'NodeJS_20'
     }
 
     environment {
@@ -18,13 +18,11 @@ pipeline {
 
         stage('Test Node.js App') {
             steps {
-                steps {
-               echo "  test teh nodejs application"
+                echo "Testing the Node.js application..."
                 sh 'node -v'
                 sh 'npm -v'
                 sh 'npm install'
                 sh 'npm test'
-            }
             }
         }
 
@@ -40,7 +38,7 @@ pipeline {
         stage('Tag Docker Image') {
             steps {
                 script {
-                    echo "Tagging Docker image $DOCKER_IMAGE:$DOCKER_TAG..."
+                    echo "Tagging Docker image..."
                     sh "docker tag $DOCKER_IMAGE:$DOCKER_TAG $DOCKER_IMAGE:$DOCKER_TAG"
                 }
             }
@@ -63,7 +61,6 @@ pipeline {
                 script {
                     echo "Pulling image from Docker Hub..."
                     sh "docker pull $DOCKER_IMAGE:$DOCKER_TAG"
-                    echo "Image pulled successfully!"
                 }
             }
         }
@@ -71,7 +68,7 @@ pipeline {
         stage('Verify Docker Image') {
             steps {
                 script {
-                    echo "Verifying if Docker image exists locally..."
+                    echo "Verifying Docker image locally..."
                     sh "docker image inspect $DOCKER_IMAGE:$DOCKER_TAG > /dev/null"
                 }
             }
