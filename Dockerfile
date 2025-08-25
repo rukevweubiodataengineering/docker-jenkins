@@ -9,7 +9,7 @@ COPY package*.json ./
 RUN npm install --only=production
 
 # Copy app source code
-COPY Node.js/ ./Node.js
+COPY node.js/ ./node.js
 
 # Expose the port your app listens on
 EXPOSE 3000
