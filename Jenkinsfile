@@ -88,7 +88,11 @@ pipeline {
         stage('Pause for Inspection') {
             steps {
                 echo "Cluster is ready. Press Enter in the terminal to continue..."
-                sh 'read -p "Press Enter to continue..."'
+              sh '''
+                        echo "Press Enter to continue..."
+                        read dummy
+                    '''
+
             }
         }
     }
