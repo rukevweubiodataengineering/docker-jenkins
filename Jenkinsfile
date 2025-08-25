@@ -16,7 +16,7 @@ pipeline {
             }
         }
 
-               stage('Test Node.js App') {
+        stage('Test Node.js App') {
             steps {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -39,15 +39,6 @@ pipeline {
             }
         }
 
-        stage('Tag Docker Image') {
-            steps {
-                script {
-                    echo "Tagging Docker image..."
-                    sh "docker tag $DOCKER_IMAGE:$DOCKER_TAG $DOCKER_IMAGE:$DOCKER_TAG"
-                }
-            }
-        }
-
         stage('Push to Docker Hub') {
             steps {
                 script {
@@ -60,49 +51,38 @@ pipeline {
             }
         }
 
-        stage('Pull Docker Image from Docker Hub') {
+        stage('Start Minikube') {
             steps {
                 script {
-                    echo "Pulling image from Docker Hub..."
-                    sh "docker pull $DOCKER_IMAGE:$DOCKER_TAG"
+                    sh '''
+                        export PATH=$PATH:/usr/local/bin
+                        # Start Minikube if not running
+                        minikube status || minikube start --driver=docker
+                        minikube version
+                        # Ensure kubectl is installed and in PATH
+                        if ! command -v kubectl &> /dev/null; then
+                            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                            chmod +x kubectl
+                            sudo mv kubectl /usr/local/bin/kubectl
+                        fi
+                        kubectl version --client
+                    '''
                 }
             }
         }
 
-        stage('Verify Docker Image') {
+        stage('Deploy to Minikube') {
             steps {
                 script {
-                    echo "Verifying Docker image locally..."
-                    sh "docker image inspect $DOCKER_IMAGE:$DOCKER_TAG > /dev/null"
+                    sh '''
+                        export PATH=$PATH:/usr/local/bin
+                        kubectl apply -f k8/deployment.yaml
+                        kubectl apply -f k8/service.yaml
+                        kubectl rollout status deployment/nodejs-app
+                        kubectl get pods
+                    '''
                 }
             }
         }
-                    stage('Start Minikube') {
-                steps {
-                    script {
-                        sh '''
-                            export PATH=$PATH:/usr/local/bin
-                            minikube status || minikube start --driver=docker
-                            minikube version
-                        '''
-                    }
-                }
-            }
-
-
-
-                   stage('Deploy to Kubernetes') {
-                steps {
-                    script {
-                        sh '''
-                            export PATH=$PATH:/usr/local/bin
-                            kubectl version --client
-                            kubectl apply -f k8/deployment.yaml
-                            kubectl apply -f k8/service.yaml
-                            kubectl get pods
-                        '''
-                    }
-                }
-            }
-
+    }
 }
